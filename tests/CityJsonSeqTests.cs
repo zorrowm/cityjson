@@ -63,43 +63,33 @@ public class CityJsonSeqTests
         var originalDocuments = CityJsonSeqReader.ReadCityJsonSeq(filePath);
 
         var tempFile = Path.GetTempFileName();
-        try
+        // Write to a temporary file
+        CityJsonSeqWriter.WriteCityJsonSeq(originalDocuments, tempFile);
+
+        // Read it back
+        var roundTrippedDocuments = CityJsonSeqReader.ReadCityJsonSeq(tempFile);
+
+        // Verify the number of documents matches
+        Assert.That(roundTrippedDocuments.Count, Is.EqualTo(originalDocuments.Count));
+
+        // Verify each document
+        for (int i = 0; i < originalDocuments.Count; i++)
         {
-            // Write to a temporary file
-            CityJsonSeqWriter.WriteCityJsonSeq(originalDocuments, tempFile);
+            var original = originalDocuments[i];
+            var roundTripped = roundTrippedDocuments[i];
 
-            // Read it back
-            var roundTrippedDocuments = CityJsonSeqReader.ReadCityJsonSeq(tempFile);
-
-            // Verify the number of documents matches
-            Assert.That(roundTrippedDocuments.Count, Is.EqualTo(originalDocuments.Count));
-
-            // Verify each document
-            for (int i = 0; i < originalDocuments.Count; i++)
-            {
-                var original = originalDocuments[i];
-                var roundTripped = roundTrippedDocuments[i];
-
-                Assert.That(roundTripped.Type, Is.EqualTo(original.Type));
-                Assert.That(roundTripped.Version, Is.EqualTo(original.Version));
+            Assert.That(roundTripped.Type, Is.EqualTo(original.Type));
+            Assert.That(roundTripped.Version, Is.EqualTo(original.Version));
                 
-                if (original.Transform != null)
-                {
-                    Assert.That(roundTripped.Transform, Is.Not.Null);
-                    Assert.That(roundTripped.Transform.Scale, Is.EqualTo(original.Transform.Scale));
-                    Assert.That(roundTripped.Transform.Translate, Is.EqualTo(original.Transform.Translate));
-                }
-
-                Assert.That(roundTripped.CityObjects.Count, Is.EqualTo(original.CityObjects.Count));
-                Assert.That(roundTripped.Vertices.Count, Is.EqualTo(original.Vertices.Count));
-            }
-        }
-        finally
-        {
-            if (File.Exists(tempFile))
+            if (original.Transform != null)
             {
-                File.Delete(tempFile);
+                Assert.That(roundTripped.Transform, Is.Not.Null);
+                Assert.That(roundTripped.Transform.Scale, Is.EqualTo(original.Transform.Scale));
+                Assert.That(roundTripped.Transform.Translate, Is.EqualTo(original.Transform.Translate));
             }
+
+            Assert.That(roundTripped.CityObjects.Count, Is.EqualTo(original.CityObjects.Count));
+            Assert.That(roundTripped.Vertices.Count, Is.EqualTo(original.Vertices.Count));
         }
     }
 }

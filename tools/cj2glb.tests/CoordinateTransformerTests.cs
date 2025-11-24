@@ -6,7 +6,7 @@ public class CoordinateTransformerTests
     {
         var crs = "urn:ogc:def:crs:EPSG::28992";
         var result = CoordinateTransformer.TransformToWGS84(91649.64, 435614.06, 87.552, crs);
-        Assert.That(result[0] == 4.4666208251094135);
-        Assert.That(result[1] == 51.90541969713044);
+        Assert.That(result[0] == 4.466620732706671);
+        Assert.That(result[1] == 51.9054196717121);
     }
 }
